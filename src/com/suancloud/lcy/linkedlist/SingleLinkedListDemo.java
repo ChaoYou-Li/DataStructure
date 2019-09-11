@@ -25,14 +25,25 @@ public class SingleLinkedListDemo {
         HeroNode node2 = new HeroNode(2, "吴勇", "智多星");
         HeroNode node3 = new HeroNode(3, "林冲", "豹子头");
         HeroNode node4 = new HeroNode(4, "武松", "行者");
+        HeroNode node5 = new HeroNode(5, "鲁智深", "花和尚");
+        HeroNode node6 = new HeroNode(6, "李逵", "黑旋风");
 //        HeroNode node5 = new HeroNode(4, "花荣", "小李广");
 
         SingleLinkedList singleLinkedList = new SingleLinkedList();
-        singleLinkedList.addNode(node1);
-        singleLinkedList.addNode(node2);
-        singleLinkedList.addNode(node3);
-        singleLinkedList.addNode(node4);
+
+        singleLinkedList.addByOrder(node3);
+        singleLinkedList.addByOrder(node1);
+//        singleLinkedList.addByOrder(node2);
+        singleLinkedList.addByOrder(node5);
+        singleLinkedList.addByOrder2(node6);
+        singleLinkedList.addByOrder2(node2);
+        singleLinkedList.addByOrder2(node4);
+
+        System.out.println("这是链表1");
         singleLinkedList.list();
+        System.out.println("这是链表2");
+        singleLinkedList.list2();
+
 //        System.out.println("编号查询结果："+singleLinkedList.get(1));
 //        System.out.println("更新节点结果："+singleLinkedList.update(node5));
 //        singleLinkedList.list();
@@ -52,8 +63,13 @@ public class SingleLinkedListDemo {
 //        System.out.println("链表的有效个数："+exerciseTest.getLength(singleLinkedList.getHeed()));
 //        System.out.printf("倒数第【%d】个的节点是："+exerciseTest.getLastIndexNode(singleLinkedList.getHeed(), 1), 1);
         // 测试一下反转方法
-        exerciseTest.inversion(singleLinkedList.getHeed());
-        singleLinkedList.list();
+//        System.out.println("测试一下反转方法");
+//        exerciseTest.inversion(singleLinkedList.getHeed());
+
+        System.out.println("测试合并两个链表");
+        exerciseTest.insersePrintf(singleLinkedList.getHeed(), singleLinkedList.getHead2());
+//        singleLinkedList.list();
+
     }
 }
 
@@ -61,9 +77,14 @@ public class SingleLinkedListDemo {
 class SingleLinkedList {
     // 先初始化一个头结点，头结点不能动，不存放具体数据
     private HeroNode heed = new HeroNode(0, "", "");
+    private HeroNode head2 = new HeroNode(0, "", "");
 
     public HeroNode getHeed() {
         return heed;
+    }
+
+    public HeroNode getHead2() {
+        return head2;
     }
 
     /**
@@ -115,6 +136,7 @@ class SingleLinkedList {
             temp = temp.next;
         }
     }
+
 
     // 写一个遍历链表用的方法
 //    public void
@@ -217,6 +239,35 @@ class SingleLinkedList {
             if (temp.next == null){  // 说明temp已经是最后节点了
                 break;
             }
+            if (temp.next.no > node.no){    // 表明添加节点temp的位置找到了
+                break;
+            } else if (temp.next.no == node.no){
+                flag = true;    // 表明当前英雄的编号在链表中已经存在
+                break;
+            }
+            temp = temp.next;   // 链表指针往后移动
+        }
+        //
+        if (flag){
+            System.out.println("当前英雄的编号【"+node.no+"】在链表中已经存在了");
+            return;
+        }
+        // 2、新节点.next = temp.next
+        node.next = temp.next;
+        // 3、将temp.next = 新节点
+        temp.next = node;
+
+    }
+
+    // 用来测试两个链表拼接
+    public void addByOrder2(HeroNode node){
+        // 1、首先找到新添加的节点位置，是通过辅助变量(指针)，通过遍历来找到
+        HeroNode temp = head2;
+        boolean flag = false;   // 判断当前英雄的编号在链表中是否已经存在
+        while (true){
+            if (temp.next == null){  // 说明temp已经是最后节点了
+                break;
+            }
             if (temp.next.no > node.no){    // 表明添加节点的位置找到了
                 break;
             } else if (temp.next.no == node.no){
@@ -235,6 +286,27 @@ class SingleLinkedList {
         // 3、将temp.next = 新节点
         temp.next = node;
 
+    }
+    public void list2(){
+        // 用一个辅助节点帮助遍历
+        HeroNode temp = head2.next;
+
+        // 先判断链表是否为空
+        if (temp == null){
+            System.out.println("链表为空");
+            return;
+        }
+        // 链表不为空就开始遍历
+        while (true){
+            // 先判断是否还存在下一个节点
+            if (temp == null){
+                break;
+            }
+            // 打印控制台
+            System.out.println(temp);
+            // 把节点位置往后移
+            temp = temp.next;
+        }
     }
 
 }
@@ -324,6 +396,85 @@ class ExerciseTest{
         }
         // 4、然后把原先头结点连接到辅助头结点的下一个节点
         head.next = node.next;
+    }
+
+
+    /**
+     * 5、合并两个有序的单链表，合并之后的链表依然有序【课后练习】
+     *
+     * 思路：拼接的效果是把第一个参数链表的每个节点往第二个参数链表中插入
+     *      1、定义一个传递两个要拼接链表为参数的方法
+     *      2、判断参数链表是否为空
+     *      3、遍历链表1，拿出其的每一个节点作为插入链表2的变量节点
+     *          a、先定义一个辅助节点用来临时存放链表1的当前有效节点
+     *          b、定义一个next 节点用来临时存放链表1的当前有效节点的下一个节点(因为后面移动链表指针的时候会丢失当前节点的next域)
+     *          c、把当前节点的下一个节点临时存放到next中
+     *      4、遍历链表2，用链表1的当前节点比较链表2的每一个节点的no域
+     *          a、当前链表2当前节点.next的no域 > 链表1当前节点no域，即链表2当前节点的位置就是插入点
+     *          b、当前链表2当前节点.next的no域 == 链表1当前节点no域，即链表2已存在链表1的当前节点
+     *      5、链表1当前节点.next = 链表2插入点.next
+     *      6、将链表2的当前节点.next = 链表1当前节点
+     *      7、拿出临时存放点next赋值给链表1的当前节点
+     *      8、遍历链表2
+     */
+    public void insersePrintf(HeroNode head1, HeroNode head2){ // 1、定义一个传递两个要拼接链表为参数的方法
+        // 2、判断参数链表是否为空
+        if (head1 == null || head2 == null){
+            throw new RuntimeException("链表为空");
+        }
+
+        /**
+         * 3、遍历链表1，拿出其的每一个节点作为插入链表2的变量节点
+         *      a、先定义一个辅助节点用来临时存放链表1的当前有效节点
+         *      b、定义一个next 节点用来临时存放链表1的当前有效节点的下一个节点(因为后面移动链表指针的时候会丢失当前节点的next域)
+         *      c、把当前节点的下一个节点临时存放到next中
+         */
+        HeroNode temp = head1.next;
+        HeroNode next = null;
+        while (true){
+            if (temp == null){
+                break;
+            }
+            next = temp.next;
+            /**
+             * 4、遍历链表2，用链表1的当前节点比较链表2的每一个节点的no域
+             *      a、当前链表2当前节点.next的no域 > 链表1当前节点no域，即链表2当前节点的位置就是插入点
+             *      b、当前链表2当前节点.next的no域 == 链表1当前节点no域，即链表2已存在链表1的当前节点
+             */
+            HeroNode cur = head2;
+            boolean flag = false;   // 判断当前英雄的编号在链表中是否已经存在
+            while (true){
+                if (cur.next == null){  // 说明temp已经是最后节点了
+                    break;
+                }
+                if (cur.next.no > temp.no){    // 表明添加节点temp的位置找到了
+                    break;
+                } else if (cur.next.no == temp.no){
+                    flag = true;    // 表明当前英雄的编号在链表中已经存在
+                    break;
+                }
+                cur = cur.next;   // 链表指针往后移动
+            }
+            //
+            if (flag){
+                System.out.printf("节点【%d】已存在\n", temp.no);
+            } else {
+                // 5、链表1当前节点.next = 链表2插入点.next
+                temp.next = cur.next;
+                // 6、将链表2的当前节点.next = 链表1当前节点
+                cur.next = temp;
+            }
+            // 7、拿出临时存放点next赋值给链表1的当前节点
+            temp = next;
+        }
+        // 8、遍历链表2
+        while (true){
+            if (head2.next == null){
+                break;
+            }
+            System.out.println(head2.next);
+            head2.next = head2.next.next;
+        }
     }
 
 }
