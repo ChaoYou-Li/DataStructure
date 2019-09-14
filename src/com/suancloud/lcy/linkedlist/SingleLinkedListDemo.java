@@ -1,5 +1,7 @@
 package com.suancloud.lcy.linkedlist;
 
+import java.util.Stack;
+
 /**
  * @author chaoyou
  * @email lichaoyou@suancioud.cn
@@ -25,14 +27,21 @@ public class SingleLinkedListDemo {
         HeroNode node2 = new HeroNode(2, "吴勇", "智多星");
         HeroNode node3 = new HeroNode(3, "林冲", "豹子头");
         HeroNode node4 = new HeroNode(4, "武松", "行者");
+        HeroNode node5 = new HeroNode(5, "鲁智深", "花和尚");
+        HeroNode node6 = new HeroNode(6, "张顺", "浪里白条");
 //        HeroNode node5 = new HeroNode(4, "花荣", "小李广");
 
         SingleLinkedList singleLinkedList = new SingleLinkedList();
+        SingleLinkedList listkedList2 = new SingleLinkedList();
         singleLinkedList.addNode(node1);
-        singleLinkedList.addNode(node2);
         singleLinkedList.addNode(node3);
-        singleLinkedList.addNode(node4);
+        singleLinkedList.addNode(node6);
         singleLinkedList.list();
+        listkedList2.addByOrder(node2);
+        listkedList2.addByOrder(node1);
+        listkedList2.addByOrder(node4);
+        listkedList2.addByOrder(node5);
+
 //        System.out.println("编号查询结果："+singleLinkedList.get(1));
 //        System.out.println("更新节点结果："+singleLinkedList.update(node5));
 //        singleLinkedList.list();
@@ -52,8 +61,16 @@ public class SingleLinkedListDemo {
 //        System.out.println("链表的有效个数："+exerciseTest.getLength(singleLinkedList.getHeed()));
 //        System.out.printf("倒数第【%d】个的节点是："+exerciseTest.getLastIndexNode(singleLinkedList.getHeed(), 1), 1);
         // 测试一下反转方法
-        exerciseTest.inversion(singleLinkedList.getHeed());
-        singleLinkedList.list();
+//        exerciseTest.inversion(singleLinkedList.getHeed());
+
+        // 测试链表从尾部到头部打印
+        System.out.println("测试链表从尾部到头部打印");
+        exerciseTest.insersePrintf(listkedList2.getHeed());
+
+        // 测试合并两个链表并且排序
+//        System.out.println("测试合并两个链表并且排序");
+//        exerciseTest.combineNode(singleLinkedList.getHeed(), listkedList2.getHeed());
+//        singleLinkedList.list();
     }
 }
 
@@ -240,6 +257,7 @@ class SingleLinkedList {
 }
 
 
+
 /**
  * 单链表常见的练习题
  *      1、求单链表中有效节点的个数
@@ -301,10 +319,14 @@ class ExerciseTest{
      * 3、单链表的反转【腾讯面试题】
      *
      * 思路：
-     *      1、先创建一个辅助的头结点
+     *      1、先创建一个辅助的头结点作为首尾交换的媒介
      *      2、在创建一个节点next 用来临时存放当前节点的下一个节点
-     *      3、把需要反转链表的节点反转着插入到辅助头结点上
-     *      4、然后把原先头结点连接到辅助头结点的下一个节点
+     *      3、向辅助媒介拿节点存放到当前节点的下一个节点位置
+     *      4、把当前节点放到辅助媒介中等待被拿出
+     *      5、把临时存放点next拿出来赋给当前节点(就是驱使链表指针往后移动达到遍历链表的效果)
+     *      6、把原来链表的头部接到反转后链表的首部
+     *
+     * 总结：3、4 的效果就是把后面的节点插到前面来
      */
     public void inversion(HeroNode head){
         if (head.next == null){
@@ -324,6 +346,84 @@ class ExerciseTest{
         }
         // 4、然后把原先头结点连接到辅助头结点的下一个节点
         head.next = node.next;
+    }
+
+
+    /**
+     * 4、从尾到头打印单链表【百度，要求方式1：反向遍历，2：Stack栈】
+     *
+     * 思路：
+     *      1、先创建一个Stack栈集合
+     *      2、把链表遍历按顺序把节点放入到栈中
+     *      3、再遍历栈，取出数据即可
+     */
+    public void insersePrintf(HeroNode head){
+        if (head.next == null){
+            throw new RuntimeException("链表为空");
+        }
+        // 1、先创建一个Stack栈集合
+        Stack<HeroNode> stack = new Stack<>();
+
+        // 2、把链表遍历按顺序把节点放入到栈中
+        HeroNode temp = head.next;
+        while (true){
+            if (temp == null){ // 遍历完成
+                break;
+            }
+            stack.add(temp);    // 节点入栈
+            temp = temp.next;   // 往后移动节点指针
+        }
+
+        // 3、再遍历栈，取出数据即可
+        while (!stack.empty()){
+            System.out.println(stack.pop());    // 节点出栈
+        }
+    }
+
+
+    /**
+     * 5、合并两个有序的单链表，合并之后的链表依然有序【课后练习】
+     */
+    public void combineNode(HeroNode head1, HeroNode head2){
+        if (head1.next == null || head2.next == null){
+            throw new RuntimeException("链表为空");
+        }
+        HeroNode temp = head1;
+        HeroNode cur = head2;
+        boolean flag = false;
+        while (true){
+            if (temp.next == null){
+                break;
+            }
+            while (!flag){
+                if (cur.next == null){
+                    break;
+                }
+                if (temp.next.no > cur.next.no){
+                    break;
+                } else if (temp.next.no == cur.next.no){
+                    flag = true;
+                }
+                cur = cur.next;
+            }
+            if (flag){
+                temp = temp.next;
+            } else {
+                cur.next.next = temp.next;
+                temp.next = cur.next;
+                temp = temp.next;
+            }
+
+
+        }
+
+        while (true){
+            if (temp.next == null){
+                break;
+            }
+            System.out.println(temp.next);
+            temp = temp.next;
+        }
     }
 
 }
@@ -363,6 +463,7 @@ class HeroNode {
                 '}';
     }
 }
+
 
 
 
