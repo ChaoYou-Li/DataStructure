@@ -1,0 +1,46 @@
+package com.suancloud.lcy.sort;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
+/**
+ * Author: chaoyou
+ * Email：1277618785@qq.com
+ * CSDN：https://blog.csdn.net/qq_41910568
+ * Date: 2019/9/16 0016 10:12
+ * Content：这是冒泡排序算法的实现类
+ */
+public class BubbleSorting {
+    /**
+     * c、排序规则：
+     * 	    ①一共进行数组长度-1 次大的循环
+     * 	    ②每一趟排序的次数都在逐渐减少
+     * 	    ③如果发现在某趟排序中，没有发生一次交换，可以提前结束冒泡排序，这个就是优化。
+     */
+    public static void main(String[] args){
+        int arr[] = {3, 9, -1, 10, -2};  // 原始数组
+        int temp = 0;   // 辅助遍历
+        boolean flag = false;   // 标识变量，标识是否进行交换(用于优化算法)
+        // 冒泡排序的时间复杂度O(n^2)
+        // ①一共进行数组长度-1 次大的循环
+        for (int i=0; i<arr.length-1; i++){    // 执行数组.length - 1 趟
+            // ②每一趟排序的次数都在逐渐减少
+            for (int j=0; j<arr.length-1-i; j++){   // 每一趟比较的次数
+                if (arr[j] > arr[j+1]){ // 指定冒泡的规则
+                    temp = arr[j+1];
+                    arr[j+1] = arr[j];
+                    arr[j] = temp;
+                    flag = true;
+                }
+            }
+            System.out.println("这是第【"+(i+1)+"】趟排序");
+            System.out.println(Arrays.toString(arr));
+            // ③如果发现在某趟排序中，没有发生一次交换，可以提前结束冒泡排序，这个就是优化。
+            if (flag == false){ // 证明数组元素没有发生交换位置
+                break;  // 跳出循环结束排序
+            } else {
+                flag = false;   // 重置flag！！！，进行下一次判断
+            }
+        }
+    }
+}

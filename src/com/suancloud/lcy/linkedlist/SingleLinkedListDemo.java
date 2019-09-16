@@ -32,10 +32,16 @@ public class SingleLinkedListDemo {
 //        HeroNode node5 = new HeroNode(4, "花荣", "小李广");
 
         SingleLinkedList singleLinkedList = new SingleLinkedList();
-        SingleLinkedList listkedList2 = new SingleLinkedList();
-        singleLinkedList.addNode(node1);
-        singleLinkedList.addNode(node3);
-        singleLinkedList.addNode(node6);
+
+        singleLinkedList.addByOrder(node3);
+        singleLinkedList.addByOrder(node1);
+//        singleLinkedList.addByOrder(node2);
+        singleLinkedList.addByOrder(node5);
+        singleLinkedList.addByOrder2(node6);
+        singleLinkedList.addByOrder2(node2);
+        singleLinkedList.addByOrder2(node4);
+
+        System.out.println("这是链表1");
         singleLinkedList.list();
         System.out.println("这是链表2");
         singleLinkedList.list2();
