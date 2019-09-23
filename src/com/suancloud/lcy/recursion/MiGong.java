@@ -29,7 +29,7 @@ public class MiGong {
      *
      * 迷宫问题总结：
      *      1、小球得到的路径和程序员设置的找路策略有关，找路的上下左右的顺序有关
-     *      2、在得到小球路径时，可以先使用(下右上坐)，再改成(上右下左)看看路径是不是有变化
+     *      2、在得到小球路径时，可以先使用(下右上左)，再改成(上右下左)看看路径是不是有变化
      *      3、测试回溯现象
      *      4、思考：如何求出最短路径？
      */
@@ -42,6 +42,7 @@ public class MiGong {
          *      1、创建一个二维数组
          *      2、把二维数组的四周设置墙(设置为0)
          *      3、在迷宫中设置挡板
+         *      4、初始化入口(inX, inY)坐标、出口(outX, outY)坐标
          */
         // 1、创建一个二维数组
         int[][] map = new int[8][8];
@@ -59,18 +60,27 @@ public class MiGong {
         // 3、在迷宫中设置挡板
         map[3][1] = 1;
         map[3][2] = 1;
+        map[5][3] = 1;
+
+        // 4、初始化入口(inX, inY)坐标、出口(outX, outY)坐标
+        int inX = 1, inY = 1;
+        int outX = 6, outY = 6;
+
         // 展示迷宫地图
         System.out.println("展示迷宫地图：");
-        for (int i=0; i<map.length; i++){
-            for (int j=0; j<map[i].length; j++){
-                System.out.print(map[i][j]+"  ");
-            }
-            System.out.println();
-        }
+        showMap(map);
 
         // 使用递归回溯给小球找路
-        setWay(map, 1, 1);
+        setWay(map, inX, inY, outX, outY);
         System.out.println("小球找到路后标识的地图：");
+        showMap(map);
+    }
+
+    /**
+     * 注解：展示地图
+     * @param map
+     */
+    public static void showMap(int[][] map){
         for (int i=0; i<map.length; i++){
             for (int j=0; j<map[i].length; j++){
                 System.out.print(map[i][j]+"  ");
@@ -87,34 +97,37 @@ public class MiGong {
      *      1、map 表示地图
      *      2、i、j 表示从地图的哪个位置开始出发(1, 1)
      *      3、如果小球能到map[map.length -2][map[map.length -2].length -2]
-     *      4、约定策略：当map[i][j] 为0 表示该点没有走过，1 表示墙，2 表示通路可以走，
-     *         3 表示走过，走不通(这个策略是能否在迷宫中找到出路或者找到路径的长短的关键)
+     *      4、约定策略(map[i][j]=?)：
+     *          0 表示该点没有走过，
+     *          1 表示墙，
+     *          2 表示通路可以走，
+     *          3 表示走过，走不通(这个策略是能否在迷宫中找到出路或者找到路径的长短的关键)
      *      5、在走迷宫时，需要确定一个策略(方法) 下 —> 右 -> 上 -> 左，如果该点走不通，再回溯
      */
-    public static boolean setWay(int[][] map, int i, int j){
+    public static boolean setWay(int[][] map, int inX, int inY, int outX, int outY){
         boolean flag = false;
-        if (map[map.length -2][map[map.length -2].length -2] == 2){
+        if (map[outX][outY] == 2){
             // 通路已经找到了
             flag = true;
         } else { // 还在找路
-            if (map[i][j] == 0){    // 当前点还没有走过
+            if (map[inX][inY] == 0){    // 当前点还没有走过
                 // 下 —> 右 -> 上 -> 左，如果该点走不通，再回溯
-                map[i][j] = 2;  // 假设当前可以走通
-                if (setWay(map, i + 1, j)){
+                map[inX][inY] = 2;  // 假设当前可以走通
+                if (setWay(map, inX + 1, inY, outX, outY)){
                     // 往下走得通
                     return true;
-                } else if (setWay(map, i, j + 1)){
+                } else if (setWay(map, inX, inY + 1, outX, outY)){
                     // 往右走得通
                     return true;
-                } else if (setWay(map, i - 1, j)){
+                } else if (setWay(map, inX - 1, inY, outX, outY)){
                     // 往上走得通
                     return true;
-                } else if (setWay(map, i, j - 1)){
+                } else if (setWay(map, inX, inY - 1, outX, outY)){
                     // 往左走得通
                     return true;
                 } else {
                     // 该点走不通
-                    map[i][j] = 3;
+                    map[inX][inY] = 3;
                     return false;
                 }
             } else {    // 当前点已经走过了

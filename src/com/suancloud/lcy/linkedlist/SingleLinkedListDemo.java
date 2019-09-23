@@ -1,6 +1,7 @@
 package com.suancloud.lcy.linkedlist;
 
 import java.util.Stack;
+import java.util.prefs.BackingStoreException;
 
 /**
  * @author chaoyou
@@ -120,6 +121,10 @@ class SingleLinkedList {
 
     /**
      * 注解：显示【遍历】链表的方法
+     *
+     * 步骤：
+     *      1、根据头结点判断链表是否为空
+     *      2、遍历链表依次打印每一个节点信息
      */
     public void list(){
         // 用一个辅助节点帮助遍历
@@ -143,11 +148,14 @@ class SingleLinkedList {
         }
     }
 
-    // 写一个遍历链表用的方法
-//    public void
 
     /**
      * 注解：根据节点编号查询链表是否存在该节点
+     *
+     * 步骤：
+     *      1、根据头结点判断链表是否为空
+     *      2、遍历链表拿到每一个节点对比参数no
+     *      3、返回该节点
      */
     public HeroNode get(int no){
         // 用一个辅助节点帮助遍历
@@ -170,27 +178,47 @@ class SingleLinkedList {
 
     /**
      * 注解：根据节点编号先查询链表是否存在该节点，再对该节点进行更新
+     *
+     * 步骤：
+     *      1、根据头结点判断链表是否为空
+     *      2、遍历链表拿到每一个节点对比参数节点的no
+     *      3、判断链表中是否存在该节点
+     *      4、修改链表中节点信息
+     *      5、返回修改后的节点
      */
     public HeroNode update(HeroNode heroNode){
-        HeroNode oldNode = get(heroNode.no);
-        if (oldNode == null){
-            throw new RuntimeException("链表不存在该节点");
+        // 1、根据头结点判断链表是否为空
+        if (heed.next == null){
+            throw new RuntimeException("链表为空");
         }
 
-        HeroNode temp = heed;
+        // 2、遍历链表拿到每一个节点对比参数节点的no
+        HeroNode temp = heed.next;
         boolean flag = false;
         while (true){
-            if (temp.next == null){     // 证明链表不存在要更新的节点
-                break;
+            if (temp == null){
+                break;  // 遍历完成
             }
-            if (temp.next.no == heroNode.no){
+            // 拿到每一个节点对比参数节点的no
+            if (temp.no == heroNode.no){
+                flag = true;    // 找到要修改节点
                 break;
             }
             temp = temp.next;
         }
-        oldNode.name = heroNode.name;
-        oldNode.nickName = heroNode.nickName;
-        return oldNode;
+
+        // 3、判断链表中是否存在该节点
+        if (!flag){
+            System.out.println("链表不存在此此节点");
+            return null;
+        }
+
+        // 4、修改链表中节点信息
+        temp.name = heroNode.name;
+        temp.nickName = heroNode.nickName;
+
+        // 5、返回修改后的节点
+        return temp;
     }
 
     /**
@@ -200,9 +228,21 @@ class SingleLinkedList {
      *      1、head 节点不能动，因此我们需要一个temp 辅助节点找到待删除的前一个节点
      *      2、把断口接上
      *          跳过删除节点：node.next = node.next.next
+     *
+     * 步骤：
+     *      1、根据头结点判断链表是否为空
+     *      2、遍历链表每一个节点.next对比参数no
+     *      3、判断链表中是否存在该节点
+     *      4、把当前节点.next == 当前节点.next.next
+     *      5、返回删除的节点
      */
     public HeroNode delete(int no){
+        // 1、根据头结点判断链表是否为空
+        if (heed.next == null){
+            throw new RuntimeException("链表为空");
+        }
 
+        // 2、遍历链表每一个节点.next对比参数no
         HeroNode temp = heed;   // 用一个辅助节点帮助遍历
         boolean flag = false;    // 标识是否存在要删除的节点
         // 链表不为空就开始遍历
@@ -211,17 +251,21 @@ class SingleLinkedList {
             if (temp.next == null){
                 break;
             }
+            // 每一个节点.next对比参数no
             if (temp.next.no == no){    // 上一个节点找到
-                flag = true;    // 要删除的节点存在
+                flag = true;    // 目标节点存在
                 break;
             }
             temp = temp.next;
         }
+        // 3、判断链表中是否存在该节点
         if (!flag){
             System.out.printf("不存在要删除的【%d】\n", no);
             return null;
         }
+        // 4、把当前节点.next == 当前节点.next.next
         temp.next = temp.next.next;     // 直接跳过要删除的节点连接下一个节点
+        // 5、返回删除的节点
         return temp.next;
     }
 
@@ -235,33 +279,48 @@ class SingleLinkedList {
      * 需求：
      *      1、根据排名将英雄插入到指定的位置
      *      2、如果已经存在这个排名，则提示添加失败
+     *
+     * 步骤：
+     *      1、根据头结点判断链表是否为空
+     *      2、遍历链表每一个节点，寻找插入位置，以及判断节点是否已存在
+     *      3、判断节点是否已存在
+     *      4、把参数节点插入找到的位置
+     *              新节点.next = temp.next
+     *              将temp.next = 新节点
      */
     public void addByOrder(HeroNode node){
-        // 1、首先找到新添加的节点位置，是通过辅助变量(指针)，通过遍历来找到
+        // 1、根据头结点判断链表是否为空
+        if (heed.next == null){
+            heed.next = node;
+            return;
+        }
+
+        // 2、遍历链表每一个节点，寻找插入位置，以及判断节点是否已存在
         HeroNode temp = heed;
         boolean flag = false;   // 判断当前英雄的编号在链表中是否已经存在
         while (true){
             if (temp.next == null){  // 说明temp已经是最后节点了
                 break;
             }
-            if (temp.next.no > node.no){    // 表明添加节点的位置找到了
-                break;
-            } else if (temp.next.no == node.no){
+            // 以及判断节点是否已存在
+            if (temp.next.no == node.no){
                 flag = true;    // 表明当前英雄的编号在链表中已经存在
+                break;
+            }
+            // 寻找插入位置
+            if (temp.next.no > node.no){    // 表明添加节点的位置找到了
                 break;
             }
             temp = temp.next;   // 链表指针往后移动
         }
-        //
+        // 3、判断节点是否已存在
         if (flag){
             System.out.println("当前英雄的编号【"+node.no+"】在链表中已经存在了");
             return;
         }
-        // 2、新节点.next = temp.next
-        node.next = temp.next;
-        // 3、将temp.next = 新节点
-        temp.next = node;
-
+        // 4、把参数节点插入找到的位置
+        node.next = temp.next;  // 新节点.next = temp.next
+        temp.next = node;   // 将temp.next = 新节点
     }
 
 
@@ -329,7 +388,15 @@ class SingleLinkedList {
  */
 class ExerciseTest{
 
-    //1、求单链表中有效节点的个数(不算head)
+    /**
+     * 需求：求单链表中有效节点的个数(不算head)
+     *
+     * 步骤：
+     *      1、先判断是否为空链表
+     *      2、利用辅助变量把头结点排除，初始化计数辅助变量
+     *      3、遍历链表每一个节点，计数变量自增加1
+     *      4、返回计数变量
+     */
     public int getLength(HeroNode head){
         // 先判断是否为空链表
         if (head.next == null){
@@ -357,9 +424,17 @@ class ExerciseTest{
      *      3、先把链表从头到尾遍历一遍得到链表的size();
      *      4、得到size() 后，从第一个开始遍历到(size - index) 个，就可以得到结果
      *      5、如果找到就返回，否则就返回null
+     *
+     * 步骤：
+     *      1、根据头结点判断链表是否为空
+     *      2、遍历链表得到有效节点个数size
+     *      3、判断index(k)范围是否超出size
+     *      4、排序头结点遍历链表到第(size - index)个节点
+     *      5、返回遍历到的节点
      */
     public HeroNode getLastIndexNode(HeroNode head, int index){
-        if (head.next == null){ // 先判断链表是否为空
+        // 先判断链表是否为空
+        if (head.next == null){
             return null;
         }
         // 先把链表从头到尾遍历一遍得到链表的size();
@@ -367,7 +442,7 @@ class ExerciseTest{
         if (index < 0 || index > size){ // 校验index 范围
             return null;
         }
-        // 得到size() 后，从第一个开始遍历到(size - index) 个，就可以得到结果
+        // 得到size() 后，从第一个有效节点开始遍历到(size - index) 个，就可以得到结果
         HeroNode temp = head.next;
         for (int i=0; i<(size - index); i++){
             temp = temp.next;
@@ -380,32 +455,38 @@ class ExerciseTest{
      * 3、单链表的反转【腾讯面试题】
      *
      * 思路：
-     *      1、先创建一个辅助的头结点作为首尾交换的媒介
-     *      2、在创建一个节点next 用来临时存放当前节点的下一个节点
-     *      3、向辅助媒介拿节点存放到当前节点的下一个节点位置
-     *      4、把当前节点放到辅助媒介中等待被拿出
-     *      5、把临时存放点next拿出来赋给当前节点(就是驱使链表指针往后移动达到遍历链表的效果)
-     *      6、把原来链表的头部接到反转后链表的首部
+     *      1、判断链表是否为空
+     *      2、创建一个辅助的头结点作为首尾交换的媒介，一个next指针，指向当前节点.next
+     *      3、遍历链表的每一个有效节点
+     *      4、把next指向当前节点.next
+     *      5、把辅助头结点.next 指向当前节点
+     *      6、把当前节点指向辅助头结点
+     *      7、把链表头结点指向辅助头结点.next
      *
      * 总结：3、4 的效果就是把后面的节点插到前面来
      */
     public void inversion(HeroNode head){
+        // 1、判断链表是否为空
         if (head.next == null){
             throw new RuntimeException("链表为空!!!!");
         }
-        /**
-         * 1、先创建一个辅助的头结点
-         */
+        // 2、创建一个辅助的头结点作为首尾交换的媒介，一个next指针，指向当前节点.next
         HeroNode node = new HeroNode(0, "", "");    // 作为首尾交换的媒介
+        HeroNode next = null;   // 指向前节点.next(保证链表不会断)
+
+        // 3、遍历链表的每一个有效节点
         HeroNode temp = head.next;
-        HeroNode next = null;   // 当前节点的下一个节点
         while (temp != null){
-            next = temp.next;   // 先把当前节点的下一个节点取出
-            temp.next = node.next;  // 问中间商拿节点放到当前节点的下一个位置
-            node.next = temp;   // 往中间商放当前节点
+            // 4、把next指向当前节点.next
+            next = temp.next;
+            // 5、把辅助头结点.next 指向当前节点
+            temp.next = node.next;
+            // 6、把当前节点指向辅助头结点
+            node.next = temp;
+
             temp = next;    // 往后移动
         }
-        // 4、然后把原先头结点连接到辅助头结点的下一个节点
+        // 7、把链表头结点指向辅助头结点.next
         head.next = node.next;
     }
 
@@ -414,18 +495,20 @@ class ExerciseTest{
      * 4、从尾到头打印单链表【百度，要求方式1：反向遍历，2：Stack栈】
      *
      * 思路：
-     *      1、先创建一个Stack栈集合
-     *      2、把链表遍历按顺序把节点放入到栈中
-     *      3、再遍历栈，取出数据即可
+     *      1、判断链表是否为空
+     *      2、创建一个Stack栈集合
+     *      3、把链表遍历按顺序把节点放入到栈中
+     *      4、再遍历栈，取出数据即可
      */
     public void insersePrintf(HeroNode head){
+        // 1、判断链表是否为空
         if (head.next == null){
             throw new RuntimeException("链表为空");
         }
-        // 1、先创建一个Stack栈集合
+        // 2、创建一个Stack栈集合
         Stack<HeroNode> stack = new Stack<>();
 
-        // 2、把链表遍历按顺序把节点放入到栈中
+        // 3、遍历链表把每一个有效节点依照顺序放入栈中
         HeroNode temp = head.next;
         while (true){
             if (temp == null){ // 遍历完成
@@ -435,7 +518,7 @@ class ExerciseTest{
             temp = temp.next;   // 往后移动节点指针
         }
 
-        // 3、再遍历栈，取出数据即可
+        // 4、再遍历栈，取出数据即可
         while (!stack.empty()){
             System.out.println(stack.pop());    // 节点出栈
         }
@@ -445,19 +528,19 @@ class ExerciseTest{
     /**
      * 5、合并两个有序的单链表，合并之后的链表依然有序【课后练习】
      *
-     * 思路：拼接的效果是把第一个参数链表的每个节点往第二个参数链表中插入
+     * 思路：拼接的效果是把第一个参数Linked1的每个节点往第二个参数Linked2中适当位置插入
      *      1、定义一个传递两个要拼接链表为参数的方法
      *      2、判断参数链表是否为空
-     *      3、遍历链表1，拿出其的每一个节点作为插入链表2的变量节点
-     *          a、先定义一个辅助节点用来临时存放链表1的当前有效节点
-     *          b、定义一个next 节点用来临时存放链表1的当前有效节点的下一个节点(因为后面移动链表指针的时候会丢失当前节点的next域)
-     *          c、把当前节点的下一个节点临时存放到next中
-     *      4、遍历链表2，用链表1的当前节点比较链表2的每一个节点的no域
-     *          a、当前链表2当前节点.next的no域 > 链表1当前节点no域，即链表2当前节点的位置就是插入点
-     *          b、当前链表2当前节点.next的no域 == 链表1当前节点no域，即链表2已存在链表1的当前节点
-     *      5、链表1当前节点.next = 链表2插入点.next
-     *      6、将链表2的当前节点.next = 链表1当前节点
-     *      7、拿出临时存放点next赋值给链表1的当前节点
+     *      3、遍历Linked1，拿出其的每一个节点作为插入Linked2的变量节点
+     *          a、先定义一个辅助节点temp：存放Linked1的当前节点
+     *          b、定义一个辅助节点next：指向temp.next(因为后面移动链表指针的时候会丢失当前节点的next域)
+     *          c、移动next 指向temp.next
+     *      4、遍历Linked2，用变量节点比较链表2的每一个节点.no，找到插入位
+     *          a、当前Linked2当前节点.next.no > temp.no，即链表2当前节点与其.next 之间就是插入位
+     *          b、当前链表2当前节点.next.no == temp.no，即链表2已存在链表1的当前节点
+     *      5、temp.next = 链表2当前节点.next
+     *      6、将链表2当前节点.next = temp
+     *      7、将temp = next(往后移动)
      *      8、遍历链表2
      */
     public void combineNode(HeroNode head1, HeroNode head2){ // 1、定义一个传递两个要拼接链表为参数的方法
@@ -467,10 +550,10 @@ class ExerciseTest{
         }
 
         /**
-         * 3、遍历链表1，拿出其的每一个节点作为插入链表2的变量节点
-         *      a、先定义一个辅助节点用来临时存放链表1的当前有效节点
-         *      b、定义一个next 节点用来临时存放链表1的当前有效节点的下一个节点(因为后面移动链表指针的时候会丢失当前节点的next域)
-         *      c、把当前节点的下一个节点临时存放到next中
+         * 3、遍历Linked1，拿出其的每一个节点作为插入Linked2的变量节点
+         *      a、定义一个辅助节点temp：存放Linked1的当前节点
+         *      b、定义一个辅助节点next：指向temp.next(因为后面移动链表指针的时候会丢失当前节点的next域)
+         *      c、移动next 指向temp.next
          */
         HeroNode temp = head1.next;
         HeroNode next = null;
@@ -478,11 +561,12 @@ class ExerciseTest{
             if (temp == null){
                 break;
             }
+            // c、移动next 指向temp.next
             next = temp.next;
             /**
-             * 4、遍历链表2，用链表1的当前节点比较链表2的每一个节点的no域
-             *      a、当前链表2当前节点.next的no域 > 链表1当前节点no域，即链表2当前节点的位置就是插入点
-             *      b、当前链表2当前节点.next的no域 == 链表1当前节点no域，即链表2已存在链表1的当前节点
+             * 4、遍历Linked2，用变量节点比较链表2的每一个节点.no，找到插入位
+             *      a、当前Linked2当前节点.next.no > temp.no，即链表2当前节点与其.next 之间就是插入位
+             *      b、当前链表2当前节点.next.no == temp.no，即链表2已存在链表1的当前节点
              */
             HeroNode cur = head2;
             boolean flag = false;   // 判断当前英雄的编号在链表中是否已经存在
@@ -502,12 +586,12 @@ class ExerciseTest{
             if (flag){
                 System.out.printf("节点【%d】已存在\n", temp.no);
             } else {
-                // 5、链表1当前节点.next = 链表2插入点.next
+                // temp.next = 链表2当前节点.next
                 temp.next = cur.next;
-                // 6、将链表2的当前节点.next = 链表1当前节点
+                // 6、将链表2当前节点.next = temp
                 cur.next = temp;
             }
-            // 7、拿出临时存放点next赋值给链表1的当前节点
+            // 7、将temp = next(往后移动)
             temp = next;
         }
         // 8、遍历链表2

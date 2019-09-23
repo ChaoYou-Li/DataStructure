@@ -31,7 +31,7 @@ public class ShellSorting {
         int temp = 0;   // 交换中间件
         for (int gap = arr.length / 2; gap > 0; gap /= 2) { // gap 为分组步长(增量)
             for (int i = gap; i < arr.length; i++) {    // 遍历每一个分组
-                for (int j = i - gap; j >= 0; j -= gap) {   // 分组元素遍历
+                for (int j = i - gap; j >= 0; j -= gap) {   // 分组元素遍历(每个分组中只有两个元素)
                     // arr[j] > arr[j + gap] 排序规则：从小到大
                     // arr[j] > arr[j + gap] 排序规则：从大到小
                     if (arr[j] > arr[j + gap]) {    // 分组元素间比较

@@ -41,7 +41,7 @@ public class DoubleLinkedListDemo {
 
 /**
  * b、分析：
- *      1、遍历方向和单向链表一样，只是可以向前查找也可以向后查找
+ *      1、遍历方式和单向链表一样，只是可以向前查找也可以向后查找
  *      2、添加(默认添加到双向链表的最后)
  * 		    ①先找到双向节点的最后一个节点
  * 		    ②temp.next = newNode
@@ -60,9 +60,9 @@ class DoubleLinkedList{
         return head;
     }
 
-    // 1、遍历方向和单向链表一样，只是可以向前查找也可以向后查找
+    // 1、遍历方式和单向链表一样，只是可以向前查找也可以向后查找
     public void list(){
-        HeroNode2 temp = head.next;
+        HeroNode2 temp = head.next; //直接指向有效节点
         if (temp == null){
             throw new RuntimeException("链表为空");
         }
@@ -156,15 +156,11 @@ class DoubleLinkedList{
 
     // 按人物编号大小的顺序添加到链表
     public void addByOrder(HeroNode2 node){
-//        if (head.next == null){ // 链表为空的情况
-//            head.next = node;
-//            node.pre = head;
-//            return;
-//        }
+
         HeroNode2 temp = head;
         boolean flag = false; // 判别链表中是否已存在该节点
         while (true){
-            if (temp.next== null){
+            if (temp.next == null){
                 break;
             }
             if (temp.next.no > node.no){
@@ -177,6 +173,7 @@ class DoubleLinkedList{
         }
         if (flag){
             System.out.println("链表中已存在该节点");
+            return;
         }
         node.next = temp.next;
         temp.next = node;

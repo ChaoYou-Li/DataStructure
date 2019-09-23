@@ -27,6 +27,7 @@ public class SelectSorting {
         for (int i=0; i<arr.length-1; i++){
             int minIndex = i;   // 最小值下标
             int min = arr[i];   // 最小值
+            // 在当前假定最小值元素后面找到最小值元素
             for (int j=i+1; j<arr.length; j++){
                 if (min > arr[j]){  // 说明min，并不是最小
                     min = arr[j];   // 重置min

@@ -24,13 +24,13 @@ public class TestDemo {
         for (int i=0; i<8000000; i++){
             arr[i] = (int) (Math.random()*800000);
         }
-        // 测试冒泡排序耗时：13s
+        // 测试冒泡排序耗时：8w = 16664 ms
 //        BubbleSorting.bubbleSort(arr);
-        // 测试选择排序耗时：3s
+        // 测试选择排序耗时：8w = 3765 ms
 //        SelectSorting.selectSort(arr);
-        // 测试插入排序耗时：1s
+        // 测试插入排序耗时：8w = 1238 ms
 //        InsertSorting.insertSort(arr);
-        // 测试希尔交换法排序耗时：8-9s
+        // 测试希尔交换法排序耗时：8w = 12398 ms
 //        ShellSorting.shellSort1(arr);
         // 测试希尔移位法排序耗时：800w = 3317 ms
 //        ShellSorting.shellSort2(arr);
@@ -38,7 +38,9 @@ public class TestDemo {
 //        QuickSorting.quickSort(arr, 0, arr.length - 1);
 //        System.out.println(Arrays.toString(arr));
         // 测试归并排序耗时：800w = 1942 ms
-        MergeSorting.mergeSort(arr, 0, arr.length-1, new int[arr.length]);
+//        MergeSorting.mergeSort(arr, 0, arr.length-1, new int[arr.length]);
+        // 测试基数排序耗时：1090 ms
+        RadixSorting.radixSort(arr);
         Date date1 = new Date();
         String end = format.format(date1);
         System.out.println("结束时间："+end);
