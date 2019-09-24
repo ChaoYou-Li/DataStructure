@@ -15,10 +15,10 @@ public class LinkedListStackDemo {
     public static void main(String[] args){
         // 初始化模拟栈的操作对象
         LinkedListStack stack = new LinkedListStack();
-        NodeStack node1 = new NodeStack(1, "宋江", "及时雨");
-        NodeStack node2 = new NodeStack(2, "吴勇", "智多星");
-        NodeStack node3 = new NodeStack(3, "林冲", "豹子头");
-        NodeStack node4 = new NodeStack(4, "武松", "行者");
+        Node node1 = new Node(1, "宋江", "及时雨");
+        Node node2 = new Node(2, "吴勇", "智多星");
+        Node node3 = new Node(3, "林冲", "豹子头");
+        Node node4 = new Node(4, "武松", "行者");
 
         // 测试入栈操作
         System.out.println("测试入栈操作");
@@ -44,31 +44,47 @@ public class LinkedListStackDemo {
     }
 }
 
-// 构建模拟栈的操作类
+/**
+ * 链栈的实现类
+ * 思想：(链尾为栈底，链头为栈顶)
+ *      ①栈空条件：头结点.next == null
+ *      ②栈满条件：由于只有内存溢出时才会出现栈满情况，通常不比考虑链栈满情况。
+ *      ③进栈操作：参数节点插入到头结点之后
+ *          data.next = head.next
+ *          head.next = data
+ *      ④出栈操作：把头结点.next 节点取出返回
+ *          temp = head.next
+ *          head.next = temp.next
+ *
+ * 优点：不存在栈满溢出问题(除非内存溢出)，规定栈的所有操作都是在单链表的表头进行操作(因为给定链栈后，
+ *      也拿到了头结点，在其后面出入一个新的节点和删除首节点都十分方便，对应算法复杂度为O(1))
+ *
+ */
 class LinkedListStack{
     // 实例化模拟栈的头结点
-    private NodeStack head = new NodeStack(5, 0);
+    private Node head = new Node();
 
-    public NodeStack getHead() {
+    public Node getHead() {
         return head;
-    }
-
-    // 栈满
-    public boolean isFull(){
-        return head.top == head.maxSize - 1;
     }
 
     // 栈空
     public boolean isEmpty(){
-        return head.top == -1;
+        return head.next == null;
     }
 
-    // 显示链表的方法
+    /**
+     * 显示链表的方法
+     *
+     * 步骤：
+     *      1、判断是否栈空
+     *      2、利用辅助节点遍历链栈
+     */
     public void list(){
         if (isEmpty()){
             throw new RuntimeException("栈为空");
         }
-        NodeStack temp = head.next;
+        Node temp = head.next;
         while (true){
             if (temp == null){
                 break;
@@ -78,54 +94,47 @@ class LinkedListStack{
         }
     }
 
-    // 入栈
-    public void push(NodeStack node){
-        if (isFull()){
-            System.out.println("栈已满");
-            return;
-        }
-        NodeStack temp = head;
-        head.top ++;
-        for (int i=0; i<head.top; i++){
-            temp = temp.next;
-        }
+    /**
+     * ③进栈操作：参数节点插入到头结点之后
+     *      data.next = head.next
+     *      head.next = data
+     */
+    public void push(Node node){
+
+        Node temp = head;
+        node.next = temp.next;
         temp.next = node;
         System.out.println("入栈数据："+node);
     }
 
-    // 出栈
-    public NodeStack pop(){
+    /**
+     * ④出栈操作：把头结点.next 节点取出返回
+     *      temp = head.next
+     *      head.next = temp.next
+     */
+    public Node pop(){
         if (isEmpty()){
             throw new RuntimeException("栈为空");
         }
-        NodeStack temp = head;
-        for (int i=0; i<head.top; i++){
-            temp = temp.next;
-        }
-        NodeStack value = temp.next;
-//        temp.next = temp.next.next;
-        head.top --;
+        Node temp = head;
+        Node value = temp.next;
+        temp.next = temp.next.next;
         return value;
     }
 }
 
 // 使用链表的形式模拟栈
-class NodeStack{
-    int top = -1;
-    int maxSize;
+class Node{
     int no;
     String name;
     String nickName;
-    NodeStack next;  // 指向下一个节点的指针
+    Node next;  // 指向下一个节点的指针
 
-    // 构造器
-
-    public NodeStack(int maxSize, int no) {
-        this.maxSize = maxSize;
-        this.no = no;
+    public Node() {
     }
 
-    public NodeStack(int no, String name, String nickName) {
+    // 构造器
+    public Node(int no, String name, String nickName) {
         this.no = no;
         this.name = name;
         this.nickName = nickName;

@@ -69,23 +69,46 @@ class ArrayStack{
     private int[] stack;  // 模拟栈的数组
     private int top = -1;    // 模拟栈顶指针
 
-    // 构造器
+    /**
+     * 初始化栈构造器
+     *
+     * 步骤：
+     *      1、初始化栈的最大容量
+     *      2、给栈分配内存空间
+     */
     public ArrayStack(int maxSize) {
         this.maxSize = maxSize;
         this.stack = new int[maxSize];
     }
 
-    // 栈满
+    /**
+     * 判断栈满
+     *
+     * 步骤：
+     *      1、判断栈顶指针 == maxSize - 1
+     */
     public boolean isFull(){
         return top == maxSize - 1;
     }
 
-    // 栈空
+    /**
+     * 判断栈空
+     *
+     * 步骤：
+     *      1、判断栈顶指针 == -1
+     */
     public boolean isEmpty(){
         return top == -1;
     }
 
-    // 入栈
+    /**
+     * 数据入栈
+     *
+     * 步骤：
+     *      1、判断是否栈满
+     *      2、先把栈顶指针自增+1
+     *      3、把参数data 赋值给栈顶指针指向空间
+     */
     public void push(int data){
         if (isFull()){
             System.out.println("栈已满");
@@ -95,7 +118,14 @@ class ArrayStack{
         stack[top] = data;
     }
 
-    // 出栈
+    /**
+     * 数据出栈
+     *
+     * 步骤：
+     *      1、先判断栈空
+     *      2、把栈顶指针指向空间数据取出，赋给value
+     *      3、把value返回
+     */
     public int pop(){
         if (isEmpty()){
             throw new RuntimeException("栈为空");
@@ -105,7 +135,14 @@ class ArrayStack{
         return value;
     }
 
-    // 遍历栈的元素，需要从栈顶开始显示数据
+    /**
+     * 显示栈中数据(自顶向下输出)
+     *
+     * 步骤：
+     *      1、先判断栈空
+     *      2、遍历栈(从栈顶向下遍历)
+     *      3、输出每一个栈空间数据
+     */
     public void list(){
         if (isEmpty()){
             System.out.println("栈为空");

@@ -40,7 +40,6 @@ public class ExerciseDemo {
                 str = "";   // 每次拼接多位数时必须清空
                 while (i < expression.length() && (c = expression.charAt(i)) >= 48
                         && (c = expression.charAt(i)) <= 57){  // 查看下一位字符是否为数字范围
-
                     str += c;  // 拼接操作
                     i ++;
                 }
@@ -54,7 +53,7 @@ public class ExerciseDemo {
     /**
      * 实现：中缀表达式转后缀表达式
      * 步骤：
-     *      1、初始化两个栈：运算符栈s1 和存储中间结果的栈s2
+     *      1、初始化两个栈：符号栈s1 和存储中间结果的栈s2
      *      2、从左到右扫描中缀表达式
      *      3、遇到数字，将其压入s2
      *      4、遇到运算符，比较其与s1 栈顶运算符的优先级：

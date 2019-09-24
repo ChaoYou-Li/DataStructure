@@ -26,49 +26,22 @@ public class SparseArray {
 			}
 			System.out.println();
 		}
-		
-		/**
-		 * 将二维数组转稀疏数组
-		 * 	1、遍历二维数组，得到有效数据(非零值)的个数sum
-		 * 	2、根据sum 和二维数组的根索引就可以创建稀疏数组sparseArr[sum+1][3]
-		 * 	3、将二维数组的有效数据的坐标(行、列)和值存入到稀疏数组中
-		 */
-		int sum = 0;
-		for(int i=0; i<chessArr1.length; i++) {
-			for(int j=0; j<chessArr1[i].length; j++) {
-				if(chessArr1[i][j] != 0) {
-					sum ++;
-				}
-			}
-		}
-		// 根据sum 和二维数组的根索引就可以创建稀疏数组sparseArr[sum+1][3]
-		int[][] sparseArr = new int[sum + 1][3];
-		// 在稀疏数组的第一行设置二维数组的结构
-		sparseArr[0][0] = chessArr1.length;
-		sparseArr[0][1] = chessArr1[1].length;
-		sparseArr[0][2] = sum;
-		for(int i=0; i<chessArr1.length; i++) {
-			for(int j=0; j<chessArr1[i].length; j++) {
-				if(chessArr1[i][j] != 0) {
-					// 将二维数组的有效数据的坐标(行、列)和值存入到稀疏数组中
-					sparseArr[i][0] = i;
-					sparseArr[i][1] = j;
-					sparseArr[i][2] = chessArr1[i][j];
-				}
-			}
-		}
+
+		// 调用转稀疏数组方法
+		int[][] sparseArr = toSparseArray(chessArr1);
 		System.out.println();
-		System.out.println("稀疏数组：");
+		System.out.println("——>稀疏数组：");
 		for(int[] row:sparseArr) {
 			for(int cel:row) {
 				System.out.print(cel+"  ");
 			}
 			System.out.println();
 		}
+
 		// 把稀疏数组写入到本地磁盘
-		dataExport("E:\\Idea_workspace\\algorithm\\array.txt", sparseArr);
+		dataExport("F:\\Java\\Idea_workspace\\algorithm\\array.txt", sparseArr);
 		// 把本地磁盘的稀疏数组文件写入线上
-		int[][] sparseArr2 = dataImport("E:\\Idea_workspace\\algorithm\\array.txt");
+		int[][] sparseArr2 = dataImport("F:\\Java\\Idea_workspace\\algorithm\\array.txt");
 		System.out.println();
 		System.out.println("磁盘中的稀疏数组：");
 		for(int[] row:sparseArr2) {
@@ -78,18 +51,9 @@ public class SparseArray {
 			System.out.println();
 		}
 		
-		/**
-		 * 将稀疏数组还原成二维数组
-		 * 	1、先读取稀疏数组的第一行，根据第一行的数据(前面两列代表的是二维数组的行、列大小)，创建原始的二维数组
-		 * 	2、再从第二行开始读取稀疏数组的数据并根据指明的行、列、值写入到二维数组对应的位置即可
-		 */
-		// 根据稀疏数组的第一行创建二维数组
-		int[][] chessArr2 = new int[sparseArr[0][0]][sparseArr[0][1]];
-		// 再从第二行开始读取稀疏数组的数据并根据指明的行、列、值写入到二维数组对应的位置即可
-		for(int i=1; i<sparseArr.length; i++) {
-			chessArr2[sparseArr[i][0]][sparseArr[i][1]] = sparseArr[i][2];
-		}
-		
+		// 调用转矩阵方法
+		int[][] chessArr2 = toMatrix(sparseArr);
+
 		System.out.println();
 		System.out.println("恢复后的二维数组：");
 		for(int[] row:chessArr2) {
@@ -123,6 +87,7 @@ public class SparseArray {
 		}
 		out.close();
 	}
+
 
 	/**
 	 * 注解：把本地磁盘的文件写入到线上代码中
@@ -162,6 +127,68 @@ public class SparseArray {
 			line ++;
 		}
 		return line;
+	}
+
+
+	/**
+	 * 二维数组 -> 稀疏数组
+	 *
+	 * 步骤：
+	 * 		1、遍历二维数组，得到有效数据(非零值)的个数sum
+	 * 		2、根据sum 和二维数组的根索引就可以创建稀疏数组sparseArr[sum+1][3]
+	 * 		3、将二维数组的有效数据的坐标(行、列)和值存入到稀疏数组中
+	 */
+	public static int[][] toSparseArray(int[][] arr){
+
+		// 1、遍历二维数组，得到有效数据(非零值)的个数sum
+		int sum = 0;
+		for (int i=0; i<arr.length; i++){
+			for (int j=0; j<arr[i].length; j++){
+				if (arr[i][j] != 0){
+					sum ++;
+				}
+			}
+		}
+
+		// 2、根据sum 和二维数组的根索引就可以创建稀疏数组sparseArr[sum+1][3]
+		int[][] sparse = new int[sum+1][3];
+		sparse[0][0] = arr.length;
+		sparse[0][1] = arr[0].length;
+		sparse[0][2] = sum;
+
+		// 3、将二维数组的有效数据的坐标(行、列)和值存入到稀疏数组中
+		int count = 0;
+		for (int i=0; i<arr.length; i++){
+			for (int j=0; j<arr[i].length; j++){
+				if (arr[i][j] != 0){
+					count ++;
+					sparse[count][0] = i;
+					sparse[count][1] = j;
+					sparse[count][2] = arr[i][j];
+				}
+			}
+		}
+		return sparse;
+	}
+
+
+	/**
+	 * 稀疏数组 -> 二维数组
+	 *
+	 * 步骤：
+	 * 		1、先读取稀疏数组的第一行，根据第一行的数据(前面两列代表的是二维数组的行、列大小)，创建原始的二维数组
+	 * 		2、再从第二行开始读取稀疏数组的数据并根据指明的行、列、值写入到二维数组对应的位置即可
+	 */
+	public static int[][] toMatrix(int[][] sparse){
+
+		// 1、先读取稀疏数组的第一行，根据第一行的数据(前面两列代表的是二维数组的行、列大小)，创建原始的二维数组
+		int[][] arr = new int[sparse[0][0]][sparse[0][1]];
+
+		// 2、再从第二行开始读取稀疏数组的数据并根据指明的行、列、值写入到二维数组对应的位置即可
+		for (int i=1; i<sparse.length; i++){
+			arr[sparse[i][0]][sparse[i][1]] = sparse[i][2];
+		}
+		return arr;
 	}
 
 }

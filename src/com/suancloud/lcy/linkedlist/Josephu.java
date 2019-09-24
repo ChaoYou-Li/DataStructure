@@ -11,10 +11,10 @@ public class Josephu {
     public static void main(String[] args){
         CircleSingleLinkedList linkedList = new CircleSingleLinkedList();
         System.out.println("测试环形链表的添加功能");
-        linkedList.addBoy(5);
+        linkedList.addBoy(10);
         linkedList.list();
         System.out.println("测试出圈小孩编号");
-        linkedList.countBoy(1, 2, 5);
+        linkedList.countBoy(1, 2, 10);
     }
 }
 
@@ -92,9 +92,11 @@ class CircleSingleLinkedList{
      *
      * 思路：
      *      1、首先创建一个辅助指针(变量)helper，指向着first 的前一个节点
-     *      2、小孩报数前，先把first 移动k - 1 次
-     *      3、当小孩报数时，让first 和 helper 指针同时的移动 m-1 次。
-     *      4、这时就可以将first 指向的小孩节点出圈
+     *      2、事先应该让helper 指向环形链表的最后一个节点
+     *      3、小孩报数前，先把first和helper 移动k - 1 次
+     *      4、小孩开始循环报数出队
+     *      5、当小孩报数时，让first 和 helper 指针同时的移动 m-1 次。
+     *      6、这时就可以将first 指向的小孩节点出圈
      *          first = first.next
      *          helper.next = first(这样原来first 指向的节点就没有任何引用，就会被回收了)
      *
@@ -110,7 +112,7 @@ class CircleSingleLinkedList{
 
         // 1、需求创建一个辅助指针(变量)helper
         Boy helper = first;
-        // 事先应该指向环形链表的最后一个节点
+        // 2、事先应该让helper 指向环形链表的最后一个节点
         while (true){
             if (helper.getNext() == first){
                 break;
@@ -118,25 +120,25 @@ class CircleSingleLinkedList{
             helper = helper.getNext();
         }
 
-        // 2、小孩报数前，先把first 移动k - 1 次
+        // 3、小孩报数前，先把first和helper 移动k - 1 次
         for (int i=0; i<startNo-1; i++){
             first = first.getNext();
             helper = helper.getNext();
         }
 
-        // 循环出队
+        // 4、小孩开始循环报数出队
         while (true){
             // 判断链表是否只有一个节点了
             if (helper == first){
                 break;
             }
-            // 3、当小孩报数时，让first 和 helper 指针同时的移动 m-1 次。
+            // 5、当小孩报数时，让first 和 helper 指针同时的移动 m-1 次。
             for (int i=0; i<count-1; i++){
                 first = first.getNext();
                 helper = helper.getNext();
             }
             System.out.printf("出队的小孩编号【%d】\n", first.getNo());
-            // 4、这时就可以将first 指向的小孩节点出圈
+            // 6、这时就可以将first 指向的小孩节点出圈
             first = first.getNext();
             helper.setNext(first);
         }
