@@ -8,7 +8,7 @@ import java.util.Arrays;
  * Email：1277618785@qq.com
  * CSDN：https://blog.csdn.net/qq_41910568
  * Date: 2019/9/19 0019 22:12
- * Content：
+ * Content：这是快速排序算法实现类
  */
 public class QuickSorting {
     public static void main(String[] args){

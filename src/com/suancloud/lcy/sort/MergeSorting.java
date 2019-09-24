@@ -8,7 +8,7 @@ import java.util.Arrays;
  * Email：1277618785@qq.com
  * CSDN：https://blog.csdn.net/qq_41910568
  * Date: 2019/9/20 0020 0:01
- * Content：
+ * Content：这是归并排序算法实现类
  */
 public class MergeSorting {
     public static void main(String[] args){
