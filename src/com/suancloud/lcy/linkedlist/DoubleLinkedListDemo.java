@@ -13,13 +13,21 @@ public class DoubleLinkedListDemo {
         HeroNode2 node2 = new HeroNode2(2, "吴勇", "智多星");
         HeroNode2 node3 = new HeroNode2(3, "林冲", "豹子头");
         HeroNode2 node4 = new HeroNode2(4, "武松", "行者");
-        HeroNode2 node5 = new HeroNode2(4, "李逵", "黑旋风");
+        HeroNode2 node11 = new HeroNode2(1, "宋江", "及时雨");
+        HeroNode2 node22 = new HeroNode2(2, "吴勇", "智多星");
+        HeroNode2 node33 = new HeroNode2(3, "林冲", "豹子头");
+        HeroNode2 node44 = new HeroNode2(4, "武松", "行者");
+//        HeroNode2 node5 = new HeroNode2(4, "李逵", "黑旋风");
 
         DoubleLinkedList doubleLinkedList = new DoubleLinkedList();
-//        doubleLinkedList.addNode(node1);
-//        doubleLinkedList.addNode(node4);
-//        doubleLinkedList.addNode(node2);
-//        doubleLinkedList.addNode(node3);
+        doubleLinkedList.addNode(node1);
+        doubleLinkedList.addNode(node2);
+        doubleLinkedList.addNode(node3);
+        doubleLinkedList.addNode(node4);
+        doubleLinkedList.addNode(node44);
+        doubleLinkedList.addNode(node33);
+        doubleLinkedList.addNode(node22);
+        doubleLinkedList.addNode(node11);
 //        System.out.println("测试双向链表的添加功能");
 //        doubleLinkedList.list();
 //        System.out.println("测试双向链表的更新功能");
@@ -29,12 +37,14 @@ public class DoubleLinkedListDemo {
 //        doubleLinkedList.deleteNode(3);
 //        doubleLinkedList.list();
         System.out.println("测试双向链表的顺序添加功能");
-        doubleLinkedList.addByOrder(node1);
-        doubleLinkedList.addByOrder(node4);
-        doubleLinkedList.addByOrder(node2);
-        doubleLinkedList.addByOrder(node3);
+//        doubleLinkedList.addByOrder(node1);
+//        doubleLinkedList.addByOrder(node4);
+//        doubleLinkedList.addByOrder(node2);
+//        doubleLinkedList.addByOrder(node3);
         doubleLinkedList.list();
-
+        // 测试判断对称方法
+        boolean flag = doubleLinkedList.isSymmetry();
+        System.out.println(flag);
     }
 }
 
@@ -56,6 +66,11 @@ public class DoubleLinkedListDemo {
 class DoubleLinkedList{
     HeroNode2 head = new HeroNode2(0, "", "");
 
+    // 双向链表改造
+//    public DoubleLinkedList() {
+//        head.next = head;
+//    }
+
     public HeroNode2 getHead() {
         return head;
     }
@@ -67,10 +82,27 @@ class DoubleLinkedList{
             throw new RuntimeException("链表为空");
         }
         while (true){
+
             if (temp == null){
                 break;
             }
             System.out.println(temp);
+            temp = temp.next;
+        }
+    }
+
+    // 双向链表改造
+    public void list2(){
+        HeroNode2 temp = head.next; //直接指向有效节点
+        if (temp == null){
+            throw new RuntimeException("链表为空");
+        }
+        while (true){
+            System.out.println(temp);
+            if (temp.next == head){
+                break;
+            }
+
             temp = temp.next;
         }
     }
@@ -93,6 +125,23 @@ class DoubleLinkedList{
        temp.next = node;
         // ③newNode.pre = temp
         node.pre = temp;
+    }
+
+    // 双向链表改造
+    public void addNode2(HeroNode2 node){
+        HeroNode2 temp = head;
+        while (true){
+            if (temp.next == head){ // ①先找到双向节点的最后一个节点
+                break;
+            }
+            temp = temp.next;
+        }
+        // ②temp.next = newNode
+        temp.next = node;
+        // ③newNode.pre = temp
+        node.pre = temp;
+        node.next = head;
+        head.pre = node;
     }
 
 
@@ -179,6 +228,38 @@ class DoubleLinkedList{
         temp.next = node;
         node.pre = temp;
         temp.pre = node;
+    }
+
+
+    /**
+     * 需求：判断带头结点的循环双链表L(含两个以上节点)中的数据节点是否为对称节点
+     *
+     * 步骤：
+     *      1、利用pre(前指针)逆方向遍历链表
+     *      2、利用next(后指针)顺方向遍历链表
+     *      3、每遍历一个节点就判断：pre == next
+     *          是：继续遍历
+     *          否：return false
+     *      4、结束条件
+     *          链表节点数为奇数：pre.pre == next.next
+     *          链表节点数为偶数：pre.pre == head && next.next == head
+     */
+    public boolean isSymmetry(){
+        if (head.next == null){
+            return false;
+        }
+        HeroNode2 next = head;
+        HeroNode2 pre = head;
+        while (true){
+            if (pre.pre == next.next || pre.pre == head && next.next == head){
+                return true;
+            }
+            if (pre.pre.no != next.next.no){
+                return false;
+            }
+            pre = pre.pre;
+            next = next.next;
+        }
     }
 
 }

@@ -34,18 +34,18 @@ public class SingleLinkedListDemo {
 
         SingleLinkedList singleLinkedList = new SingleLinkedList();
 
-        singleLinkedList.addByOrder(node3);
-        singleLinkedList.addByOrder(node1);
+//        singleLinkedList.addByOrder(node3);
+//        singleLinkedList.addByOrder(node1);
 //        singleLinkedList.addByOrder(node2);
-        singleLinkedList.addByOrder(node5);
-        singleLinkedList.addByOrder2(node6);
-        singleLinkedList.addByOrder2(node2);
-        singleLinkedList.addByOrder2(node4);
+//        singleLinkedList.addByOrder(node5);
+//        singleLinkedList.addByOrder2(node6);
+//        singleLinkedList.addByOrder2(node2);
+//        singleLinkedList.addByOrder2(node4);
 
-        System.out.println("这是链表1");
-        singleLinkedList.list();
-        System.out.println("这是链表2");
-        singleLinkedList.list2();
+//        System.out.println("这是链表1");
+//        singleLinkedList.list();
+//        System.out.println("这是链表2");
+//        singleLinkedList.list2();
 
 //        System.out.println("编号查询结果："+singleLinkedList.get(1));
 //        System.out.println("更新节点结果："+singleLinkedList.update(node5));
@@ -54,11 +54,16 @@ public class SingleLinkedListDemo {
 //        singleLinkedList.list();
 
         // 查看是否排序了
-//        singleLinkedList.addByOrder(node4);
-//        singleLinkedList.addByOrder(node2);
-//        singleLinkedList.addByOrder(node1);
-//        singleLinkedList.addByOrder(node3);
-//        singleLinkedList.addByOrder(node4);
+        singleLinkedList.addByOrder(node4);
+        singleLinkedList.addByOrder(node2);
+        singleLinkedList.addByOrder(node1);
+        singleLinkedList.addByOrder2(node3);
+        singleLinkedList.addByOrder2(node6);
+        singleLinkedList.addByOrder2(node5);
+        System.out.println("这是链表1");
+        singleLinkedList.list();
+        System.out.println("这是链表2");
+        singleLinkedList.list2();
 //        singleLinkedList.list();
 //        System.out.println("删除了："+singleLinkedList.delete(4));
 //        singleLinkedList.list();
@@ -85,6 +90,7 @@ class SingleLinkedList {
     // 先初始化一个头结点，头结点不能动，不存放具体数据
     private HeroNode heed = new HeroNode(0, "", "");
     private HeroNode head2 = new HeroNode(0, "", "");
+    private HeroNode head3 = new HeroNode(0, "", "");
 
     public HeroNode getHeed() {
         return heed;
@@ -92,6 +98,10 @@ class SingleLinkedList {
 
     public HeroNode getHead2() {
         return head2;
+    }
+
+    public HeroNode getHead3() {
+        return head3;
     }
 
     /**
@@ -528,80 +538,55 @@ class ExerciseTest{
     /**
      * 5、合并两个有序的单链表，合并之后的链表依然有序【课后练习】
      *
-     * 思路：拼接的效果是把第一个参数Linked1的每个节点往第二个参数Linked2中适当位置插入
+     * 思路：采用归并算法把两个有序链表合并成一个有序链表
      *      1、定义一个传递两个要拼接链表为参数的方法
      *      2、判断参数链表是否为空
-     *      3、遍历Linked1，拿出其的每一个节点作为插入Linked2的变量节点
-     *          a、先定义一个辅助节点temp：存放Linked1的当前节点
-     *          b、定义一个辅助节点next：指向temp.next(因为后面移动链表指针的时候会丢失当前节点的next域)
-     *          c、移动next 指向temp.next
-     *      4、遍历Linked2，用变量节点比较链表2的每一个节点.no，找到插入位
-     *          a、当前Linked2当前节点.next.no > temp.no，即链表2当前节点与其.next 之间就是插入位
-     *          b、当前链表2当前节点.next.no == temp.no，即链表2已存在链表1的当前节点
-     *      5、temp.next = 链表2当前节点.next
-     *      6、将链表2当前节点.next = temp
-     *      7、将temp = next(往后移动)
-     *      8、遍历链表2
+     *      3、定义三个辅助变量：head1节点指针、head2节点指针、辅助链表指针
+     *      4、同时遍历head1、head2 链表，各自拿出一个节点做比较，把小的节点插入辅助链表(直到任意一方遍历完成才结束遍历)
+     *      5、分别遍历head1、head2 链表，把各自剩余部分节点插入到辅助链表
+     *      6、把head1 重新接到辅助链表上
      */
     public void combineNode(HeroNode head1, HeroNode head2){ // 1、定义一个传递两个要拼接链表为参数的方法
-        // 2、判断参数链表是否为空
-        if (head1 == null || head2 == null){
-            throw new RuntimeException("链表为空");
+        if (head1.next == null || head2.next == null){
+            throw new RuntimeException("参数为空");
         }
 
-        /**
-         * 3、遍历Linked1，拿出其的每一个节点作为插入Linked2的变量节点
-         *      a、定义一个辅助节点temp：存放Linked1的当前节点
-         *      b、定义一个辅助节点next：指向temp.next(因为后面移动链表指针的时候会丢失当前节点的next域)
-         *      c、移动next 指向temp.next
-         */
-        HeroNode temp = head1.next;
-        HeroNode next = null;
-        while (true){
-            if (temp == null){
-                break;
-            }
-            // c、移动next 指向temp.next
-            next = temp.next;
-            /**
-             * 4、遍历Linked2，用变量节点比较链表2的每一个节点.no，找到插入位
-             *      a、当前Linked2当前节点.next.no > temp.no，即链表2当前节点与其.next 之间就是插入位
-             *      b、当前链表2当前节点.next.no == temp.no，即链表2已存在链表1的当前节点
-             */
-            HeroNode cur = head2;
-            boolean flag = false;   // 判断当前英雄的编号在链表中是否已经存在
-            while (true){
-                if (cur.next == null){  // 说明temp已经是最后节点了
-                    break;
-                }
-                if (cur.next.no > temp.no){    // 表明添加节点temp的位置找到了
-                    break;
-                } else if (cur.next.no == temp.no){
-                    flag = true;    // 表明当前英雄的编号在链表中已经存在
-                    break;
-                }
-                cur = cur.next;   // 链表指针往后移动
-            }
-            //
-            if (flag){
-                System.out.printf("节点【%d】已存在\n", temp.no);
+        // 3、定义三个辅助变量：head1节点指针、head2节点指针、辅助链表指针
+        HeroNode h1 = head1.next; // head1 链表节点指针
+        HeroNode h2 = head2.next; // head2 链表节点指针
+        // 创建一个辅助链表头结点
+        HeroNode temp = head1;
+        HeroNode t = temp;  // temp 辅助链表下标
+
+        // 4、同时遍历head1、head2 链表，各自拿出一个节点做比较，把小的节点插入辅助链表(直到任意一方遍历完成才结束遍历)
+        while (h1 != null && h2 != null){
+            // 把两个链表的当前对比节点中小的插入到辅助链表中
+            if (h1.no > h2.no){
+                t.next = h2;
+                t = t.next;
+                h2 = h2.next;
             } else {
-                // temp.next = 链表2当前节点.next
-                temp.next = cur.next;
-                // 6、将链表2当前节点.next = temp
-                cur.next = temp;
+                t.next = h1;
+                t = t.next;
+                h1 = h1.next;
             }
-            // 7、将temp = next(往后移动)
-            temp = next;
         }
-        // 8、遍历链表2
-        while (true){
-            if (head2.next == null){
-                break;
-            }
-            System.out.println(head2.next);
-            head2.next = head2.next.next;
+
+        // 5、分别遍历head1、head2 链表，把各自剩余部分节点插入到辅助链表
+        // 遍历head1 链表可能剩余节点
+        while (h1 != null){
+            t.next = h1;
+            t = t.next;
+            h1 = h1.next;
         }
+        // 遍历head2 链表可能剩余节点
+        while (h2 != null){
+            t.next = h2;
+            t = t.next;
+            h2 = h2.next;
+        }
+        // 6、把head1 重新接到辅助链表上
+        head1.next = temp.next;
     }
 
 }

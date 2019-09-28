@@ -1,5 +1,7 @@
 package com.suancloud.lcy.search;
 
+import org.omg.Messaging.SYNC_WITH_TRANSPORT;
+
 import java.util.Hashtable;
 import java.util.Scanner;
 
@@ -50,6 +52,7 @@ public class HashTabDemo {
                     break;
                 case "exit":
                     scanner.close();
+                    System.exit(0);
                     break;
                 default:
                     break;
@@ -80,7 +83,7 @@ class HashTab<E, T>{
      */
     public int hashFun(E key){
         int num = key.hashCode();
-        return num % size;
+        return (num % size + size) % size;
     }
 
     /**
@@ -88,7 +91,10 @@ class HashTab<E, T>{
      */
     public void put(E key, T obj){
         int empLinkedListNo = hashFun(key);
-        empLinkedLists[empLinkedListNo].add(key, obj);
+        int num = empLinkedLists[empLinkedListNo].add(key, obj);
+        if (num == 1){
+            System.out.println("【key="+key+"】的节点添加成功");
+        }
     }
 
     /**
@@ -106,15 +112,20 @@ class HashTab<E, T>{
     public void get(E key){
         int empLinkedListNo = hashFun(key);
         Object data = empLinkedLists[empLinkedListNo].get(key);
-        System.out.println("查找数据："+data.toString());
+        if (data != null){
+            System.out.println("查找数据："+data.toString());
+        }
     }
 
     /**
      * 编写一个移除节点的方法
      */
-    public int remove(E key){
+    public void remove(E key){
         int empLinkedListNo = hashFun(key);
-        return empLinkedLists[empLinkedListNo].remove(key);
+        int num = empLinkedLists[empLinkedListNo].remove(key);
+        if (num == 1){
+            System.out.println("【key="+key+"】的节点删除成功");
+        }
     }
 }
 
@@ -122,12 +133,13 @@ class HashTab<E, T>{
  * 注解：编写一个以EmpNode为节点的链表
  */
 class EmpLinkedList<E, T>{
-    EmpNode head = null;
+    // 头指针，指向第一个节点
+    EmpNode head;   // 默认null
 
     /**
      * 设置链表的普通添加方法
      */
-    public void add(E key, T object){
+    public int add(E key, T object){
         EmpNode<E, T> node = new EmpNode<>();
         node.setKey(key);
         node.setData(object);
@@ -135,28 +147,31 @@ class EmpLinkedList<E, T>{
         if (head == null){
             // 直接插入到head后面
             head = node;
-            return;
+            return 1;
         }
-        // 链表不为空，利用辅助节点遍历链表到最后节点
-        EmpNode temp = head;
-        boolean flag = false;
+        // 链表不为空，利用辅助指针遍历链表到最后节点
+        EmpNode temp = head;    // 遍历指针
+        boolean flag = false;   // 存在标识
         while (true){
-            // 已找到最后节点
-            if (null == temp.getNext()){
-                break;
-            }
             // 当前key已经存在
             if (temp.getKey().equals(key)){
                 flag = true;
             }
+            // 已找到最后节点
+            if (null == temp.getNext()){
+                break;
+            }
+            // 遍历指针往后移动
             temp = temp.getNext();
         }
         if (flag){
             // key存在，可直接覆盖data域
             temp.setData(object);
+            return 1;
         } else {
             // key不存在，新建节点
             temp.setNext(node);
+            return 1;
         }
     }
 
@@ -174,10 +189,10 @@ class EmpLinkedList<E, T>{
         StringBuffer buffer = new StringBuffer();
         buffer.append("链表"+(no+1)+"数据：");
         while (true){
-            buffer.append(temp.getData().toString());
             buffer.append("=>");
+            buffer.append(temp.getData().toString());
             if (null == temp.getNext()){
-                buffer.append(temp.getData().toString());
+//                buffer.append(temp.getData().toString());
                 break;
             }
             temp = temp.getNext();
@@ -231,7 +246,7 @@ class EmpLinkedList<E, T>{
         temp.setNext(head);
         boolean flag = false;
         while (true){
-            if (temp.getNext().getNext() == null){
+            if (temp.getNext() == null){
                 break;
             }
             // 找到目标节点
@@ -242,6 +257,11 @@ class EmpLinkedList<E, T>{
             temp = temp.getNext();
         }
         if (flag){
+            // 要删除的节点是否为head
+            if (temp.getNext() == head){
+                head = head.getNext();
+                return 1;
+            }
             temp.setNext(temp.getNext().getNext());
             return 1;
         }
